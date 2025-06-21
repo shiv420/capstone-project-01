@@ -2,9 +2,21 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = "phillip420/capstone-projet"
-        IMAGE_TAG = "v1"
+        //IMAGE_TAG = "v1"
     }
      stages {
+        steage('User Input'){
+            steps {
+                script {
+                    // Ask for a custom image tag
+                    IMAGE_TAG = input(
+                        id: 'userInput', message: 'Enter the Docker image tag:',
+                        parameters: [string(defaultValue: 'latest', description: 'Image tag', name: 'IMAGE_TAG')]
+                    )
+                }
+            }
+        }
+        
         stage('Code-Checkout') {
             steps {
                 // Get some code from a GitHub repository
@@ -53,10 +65,10 @@ pipeline {
     post {
         always {
             echo 'Cleaning up Docker resources...'
-         //   sh 'docker logout || true'
-           // sh "docker rmi -f ${IMAGE_NAME}:${IMAGE_TAG} || true"
-            //sh 'docker container prune -f'
-            //sh 'docker image prune -f'
+            sh 'docker logout || true'
+            sh "docker rmi -f ${IMAGE_NAME}:${IMAGE_TAG} || true"
+            sh 'docker container prune -f'
+            sh 'docker image prune -f'
         }
     }
 }
