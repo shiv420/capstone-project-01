@@ -17,7 +17,7 @@ pipeline {
         stage('Docker-Build'){
             steps {
                 echo 'Docker build triggred '
-                sh ''' docker build -t phillip420/capstone-projet:v1 -f Dockerfile'''
+                sh ''' docker build -f Dockerfile -t phillip420/capstone-projet:v1 .'''
             }
         }
     }
