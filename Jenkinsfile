@@ -1,22 +1,13 @@
 pipeline {
     agent any
+    parameters {  
+        string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Type of package to build')  
+    }  
     environment {
         IMAGE_NAME = "phillip420/capstone-projet"
         //IMAGE_TAG = "v1"
     }
      stages {
-        stage('User Input'){
-            steps {
-                script {
-                    // Ask for a custom image tag
-                    IMAGE_TAG = input(
-                        id: 'userInput', message: 'Enter the Docker image tag:',
-                        parameters: [string(defaultValue: 'latest', description: 'Image tag', name: 'IMAGE_TAG')]
-                    )
-                }
-            }
-        }
-        
         stage('Code-Checkout') {
             steps {
                 // Get some code from a GitHub repository
