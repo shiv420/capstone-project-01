@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        IMAGE_NAME = "phillip420/capstone-projet"
+        IMAGE_TAG = "v1"
+    }
      stages {
         stage('Code-Checkout') {
             steps {
@@ -7,8 +11,6 @@ pipeline {
                 git credentialsId: 'GIT_CREDS', url: 'https://github.com/shiv420/capstone-project-01.git'
             }
              post {
-                // If Maven was able to run the tests, even if some of the test
-                // failed, record the test results and archive the jar file.
                 success {
                     echo 'Successfully checkout completed.'
                 }
@@ -17,8 +19,32 @@ pipeline {
         stage('Docker-Build'){
             steps {
                 echo 'Docker build triggred '
-                sh ''' docker build -f Dockerfile -t phillip420/capstone-projet:v1 .'''
+                sh ''' docker build -f Dockerfile -t ${IMAGE_NAME}:${IMAGE_TAG} .'''
             }
+        }
+        stage('Docker-Login'){
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'DOCKER-CREDS', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                }
+            } 
+            post {
+                success {
+                    echo 'Docker login successfully.'
+                }
+            }   
+             
+        }
+        
+    }
+
+    post {
+        always {
+            echo 'Cleaning up Docker resources...'
+         //   sh 'docker logout || true'
+           // sh "docker rmi -f ${IMAGE_NAME}:${IMAGE_TAG} || true"
+            //sh 'docker container prune -f'
+            //sh 'docker image prune -f'
         }
     }
 }
