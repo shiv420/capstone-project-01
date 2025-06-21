@@ -5,7 +5,7 @@ pipeline {
         //IMAGE_TAG = "v1"
     }
      stages {
-        steage('User Input'){
+        stage('User Input'){
             steps {
                 script {
                     // Ask for a custom image tag
